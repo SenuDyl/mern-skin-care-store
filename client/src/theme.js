@@ -1,45 +1,41 @@
+// color design tokens export
 export const colorTokens = {
     grey: {
-        0: "#FFFFFF",
-        10: "#F5F5F5",
-        50: "#E8E8E8",
-        100: "#D0D0D0",
-        200: "#B3B3B3",
-        300: "#8F8F8F",
-        400: "#6C6C6C",
-        500: "#4B4B4B",
-        600: "#383838",
-        700: "#2B2B2B",
-        800: "#1F1F1F",
-        900: "#121212",
-        1000: "#000000",
+        0: "#FFFFFF",  // pure white
+        10: "#F7F7F7", // very light grey (close to white)
+        50: "#EDEDED", // light grey
+        100: "#D0D0D0", // light-medium grey
+        200: "#B2B2B2", // medium grey
+        300: "#999999", // medium grey
+        400: "#7F7F7F", // slightly dark grey
+        500: "#666666", // neutral grey
+        600: "#4D4D4D", // dark grey
+        700: "#333333", // very dark grey
+        800: "#1A1A1A", // almost black
+        900: "#0A0A0A", // dark blackish grey
+        1000: "#000000", // pure black
+    },
+    white: {
+        0: "#FFFFFF",  // pure white
+        10: "#FAF9FA", // off-white
+        20: "#F5F5F5", // warm white
+        30: "#F1F1F1", // very light warm greyish white
     },
     primary: {
-        50: "#E0F7FA",
-        100: "#B2EBF2",
-        200: "#80DEEA",
-        300: "#4DD0E1",
-        400: "#26C6DA",
-        500: "#00BCD4",
-        600: "#00ACC1",
-        700: "#0097A7",
-        800: "#00838F",
-        900: "#006064",
+        50: "#FDE6F0", // light pink
+        100: "#FBC9E1", // pink
+        200: "#F8A1D2", // soft pink
+        300: "#F77AB2", // pink
+        400: "#F45394", // bright pink
+        500: "#F12C77", // vibrant pink
+        600: "#D41F64", // darker pink
+        700: "#A31850", // rich pink
+        800: "#7B103B", // deep pink
+        900: "#4E0626", // dark pink
     },
-    secondary: {
-        50: "#FBE9E7",
-        100: "#FFCCBC",
-        200: "#FFAB91",
-        300: "#FF8A65",
-        400: "#FF7043",
-        500: "#FF5722",
-        600: "#F4511E",
-        700: "#E64A19",
-        800: "#D84315",
-        900: "#BF360C",
-    }
-}
+};
 
+// mui theme settings
 export const themeSettings = (mode) => {
     return {
         palette: {
@@ -48,25 +44,24 @@ export const themeSettings = (mode) => {
                 ? {
                     // palette values for dark mode
                     primary: {
-                        dark: colorTokens.primary[300],
+                        dark: colorTokens.primary[200],
                         main: colorTokens.primary[500],
-                        light: colorTokens.primary[700],
-                    },
-                    secondary: {
-                        dark: colorTokens.secondary[300],
-                        main: colorTokens.secondary[500],
-                        light: colorTokens.secondary[700],
+                        light: colorTokens.primary[800],
                     },
                     neutral: {
-                        dark: colorTokens.grey[200],
-                        main: colorTokens.grey[300],
-                        mediumMain: colorTokens.grey[400],
-                        medium: colorTokens.grey[500],
+                        dark: colorTokens.grey[100],
+                        main: colorTokens.grey[200],
+                        mediumMain: colorTokens.grey[300],
+                        medium: colorTokens.grey[400],
                         light: colorTokens.grey[700],
                     },
                     background: {
                         default: colorTokens.grey[900],
                         alt: colorTokens.grey[800],
+                    },
+                    white: {
+                        light: colorTokens.white[0], // pure white for highlights
+                        offWhite: colorTokens.white[10], // off-white for cards, etc.
                     },
                 }
                 : {
@@ -75,11 +70,6 @@ export const themeSettings = (mode) => {
                         dark: colorTokens.primary[700],
                         main: colorTokens.primary[500],
                         light: colorTokens.primary[50],
-                    },
-                    secondary: {
-                        dark: colorTokens.secondary[700],
-                        main: colorTokens.secondary[500],
-                        light: colorTokens.secondary[50],
                     },
                     neutral: {
                         dark: colorTokens.grey[700],
@@ -92,37 +82,45 @@ export const themeSettings = (mode) => {
                         default: colorTokens.grey[10],
                         alt: colorTokens.grey[0],
                     },
+                    white: {
+                        light: colorTokens.white[0], // pure white for highlights
+                        offWhite: colorTokens.white[10], // off-white for cards, etc.
+                    },
                 }),
         },
         typography: {
-            fontFamily: ["Arial", "sans-serif"].join(","),
-            fontSize: 14,
+            fontFamily: ["Poppins", "sans-serif"].join(","),
+            fontSize: 12,
             h1: {
-                fontFamily: ["Arial", "sans-serif"].join(","),
-                fontSize: 36,
+                fontFamily: ["Dancing Script", "Poppins", "sans-serif"].join(","),
+                fontSize: 40,
+                fontWeight: 300,
             },
             h2: {
-                fontFamily: ["Arial", "sans-serif"].join(","),
-                fontSize: 28,
+                fontFamily: ["Dancing Script", "Poppins", "sans-serif"].join(","),
+                fontSize: 32,
+                fontWeight: 200,
             },
             h3: {
-                fontFamily: ["Arial", "sans-serif"].join(","),
-                fontSize: 22,
+                fontFamily: ["Dancing Script", "Poppins", "sans-serif"].join(","),
+                fontSize: 24,
+                fontWeight: 100,
             },
             h4: {
-                fontFamily: ["Arial", "sans-serif"].join(","),
-                fontSize: 18,
+                fontFamily: ["Poppins", "sans-serif"].join(","),
+                fontSize: 20,
+                fontWeight: 500,
             },
             h5: {
-                fontFamily: ["Arial", "sans-serif"].join(","),
+                fontFamily: ["Poppins", "sans-serif"].join(","),
                 fontSize: 16,
+                fontWeight: 400,
             },
             h6: {
-                fontFamily: ["Arial", "sans-serif"].join(","),
+                fontFamily: ["Poppins", "sans-serif"].join(","),
                 fontSize: 14,
+                fontWeight: 400,
             },
-        }
-
-
-    }
-}
+        },
+    };
+};
