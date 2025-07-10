@@ -24,6 +24,7 @@ router.get('/confirm', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
+    console.log("Triggered login route")
     const result = await userService.loginUser(req.body);
     res.status(200).send(result);
   } catch (error) {

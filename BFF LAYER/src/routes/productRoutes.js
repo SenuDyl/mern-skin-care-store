@@ -2,9 +2,10 @@ const express = require('express');
 const { getProduct, getAllProducts } = require('../services/productService');
 
 const router = express.Router();
+const authenticateJWT = require('../middleware/auth');
 
 // Get all products
-router.get('/', async (req, res) => {
+router.get('/', authenticateJWT, async (req, res) => {
     try {
         const products = await getAllProducts(); 
         res.json(products);

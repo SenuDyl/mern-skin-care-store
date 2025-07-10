@@ -16,6 +16,7 @@ router.put('/:userId/:productId', async (req, res) => {
     const { userId, productId } = req.params;
     const { quantity } = req.body;
     const updatedCart = await cartService.addItemToCart(userId, productId, quantity);
+    console.log("Creating the cart", userId, productId, quantity)
     res.json(updatedCart);
   } catch (err) {
     res.status(err.response?.status || 500).send(err.response?.data || 'Failed to add item');
@@ -25,8 +26,8 @@ router.put('/:userId/:productId', async (req, res) => {
 router.patch('/:userId/:productId', async (req, res) => {
   try {
     const { userId, productId } = req.params;
-    const { action } = req.query;
-    const updatedCart = await cartService.updateItemQuantity(userId, productId, action);
+    const { quantity } = req.query;
+    const updatedCart = await cartService.updateItemQuantity(userId, productId, quantity);
     res.json(updatedCart);
   } catch (err) {
     res.status(err.response?.status || 500).send(err.response?.data || 'Failed to update quantity');
