@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Box,
@@ -7,7 +7,9 @@ import {
   IconButton,
   Toolbar,
   Typography,
-  Divider
+  Divider,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import {
   ShoppingCartOutlined as CartIcon,
@@ -20,11 +22,15 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import ShoppingCartWidget from '../ShoppingCartComponents/ShoppingCartWidget';
+import { useAuth } from '../../hooks/AuthContext';
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
   const theme = useTheme();
   const location = useLocation();
-  const isHomePage = location.pathname === '/home';
+  const isHomePage = location.pathname === '/';
 
   const navColor = isHomePage ? theme.palette.white.light : 'black';
   const brandColor = isHomePage ? theme.palette.white.offwhite : 'black';
@@ -36,6 +42,18 @@ const Navbar = () => {
   const isNonMobileScreen = useMediaQuery('(min-width:1000px)');
 
   const cartItems = ['Item1', 'Item2', 'Item3'];
+
+  // State for Account Menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleAccountClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleAccountClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -135,7 +153,10 @@ const Navbar = () => {
           >
             <CartIcon />
           </IconButton>
-          <IconButton sx={{ color: navColor, mx: 1 }}>
+          <IconButton
+            sx={{ color: navColor, mx: 1 }}
+            onClick={handleAccountClick}
+          >
             <AccountBoxOutlined />
           </IconButton>
 
@@ -146,6 +167,44 @@ const Navbar = () => {
               cartItems={cartItems}
             />
           )}
+
+          {/* Account Dropdown Menu */}
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleAccountClose}
+            PaperProps={{
+              sx: {
+                mt: 1,
+                borderRadius: 2,
+                minWidth: 160,
+                boxShadow: '0px 3px 8px rgba(0,0,0,0.15)',
+              },
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                handleAccountClose();
+                navigate('/account'); // or wherever your account page is
+              }}
+            >
+              My Account
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleAccountClose();
+                if (user?.userId) {
+                  logout(); // call the logout function
+                } else {
+                  navigate('/login'); // go to login page if not logged in
+                }
+              }}
+            >
+              {user?.userId ? 'Logout' : 'Login'}
+            </MenuItem>
+
+          </Menu>
+
         </Toolbar>
       </AppBar>
     </Box>

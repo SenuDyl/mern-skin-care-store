@@ -14,17 +14,16 @@ import {
   Grid,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
+import { useCart } from "../../hooks/CartContext";
 
 const states = [
-  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-  "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
-  "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-  "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
-  "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-  "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-  "Wisconsin", "Wyoming"
+  "Ampara", "Anuradhapura", "Badulla", "Batticaloa", "Colombo", "Galle",
+  "Gampaha", "Hambantota", "Jaffna", "Kalutara", "Kandy", "Kegalle",
+  "Kilinochchi", "Kurunegala", "Mannar", "Matale", "Matara", "Monaragala",
+  "Mullaitivu", "Nuwara Eliya", "Polonnaruwa", "Puttalam", "Ratnapura",
+  "Trincomalee", "Vavuniya"
 ];
+
 
 const CheckoutForm = () => {
   const {
@@ -48,10 +47,46 @@ const CheckoutForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    // This won't be called as payment is disabled
-    console.log(data);
+  const { cartItems } = useCart()
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          country: "Sri Lanka",
+          houseNumber: data.street,
+          apartment: data.apartment,
+          town: data.city,
+          district: data.state,
+          postcode: data.zip,
+          phoneNumber: data.phone,
+          additionalInformation: data.notes,
+          paymentMethod: "Cash on Delivery",
+          items: cartItems.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price
+          }))
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to place order");
+
+      const result = await response.json();
+      alert("✅ Order placed successfully! Check your email.");
+      console.log("Order response:", result);
+    } catch (err) {
+      console.error("❌ Order failed:", err.message);
+      alert("❌ Failed to place order. Please try again.");
+    }
   };
+
 
   return (
     <Box
@@ -147,9 +182,9 @@ const CheckoutForm = () => {
                 {...field}
                 label="Country / Region"
                 disabled
-                value="United States (US)"
+                value="Sri Lanka"
               >
-                <MenuItem value="United States (US)">United States (US)</MenuItem>
+                <MenuItem value="Sri Lanka">Sri Lanka</MenuItem>
               </Select>
             </FormControl>
           )}
@@ -211,14 +246,14 @@ const CheckoutForm = () => {
           <Controller
             name="state"
             control={control}
-            rules={{ required: "State is required" }}
+            rules={{ required: "District is required" }}
             render={({ field }) => (
               <FormControl fullWidth>
-                <InputLabel>State</InputLabel>
+                <InputLabel>District</InputLabel>
                 <Select
                   {...field}
                   label="State"
-                  defaultValue="California"
+                  defaultValue="Colombo"
                 >
                   {states.map((state) => (
                     <MenuItem key={state} value={state}>
@@ -302,20 +337,13 @@ const CheckoutForm = () => {
       <Typography variant="subtitle1" sx={{ mt: 3, mb: 1 }}>
         <b>Payment</b>
       </Typography>
-      <FormControlLabel
-        control={<Checkbox disabled />}
-        label={
-          <Typography variant="body2" color="textSecondary">
-            Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.
-          </Typography>
-        }
-      />
+      <Typography variant="body2" color="textSecondary">
+        Sorry, it seems that the only available payment method is Cash on Delivery. Please contact us if you require assistance or wish to make alternate arrangements.          </Typography>
       <Box sx={{ mt: 2 }}>
         <Button
           variant="contained"
           color="primary"
           fullWidth
-          disabled
           sx={{ bgcolor: "#ff4a6e", color: "#fff", py: 1.5, fontWeight: "bold" }}
         >
           Place Order

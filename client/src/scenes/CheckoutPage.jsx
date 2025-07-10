@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Grid, Container } from '@mui/material';
 import CheckoutForm from '../components/ShoppingCartComponents/CheckoutForm';
-import CartSummary from '../components/ShoppingCartComponents/CartSummary';
 import Navbar from '../components/HomePage/Navbar';
+import CartSummary from '../components/ShoppingCartComponents/CartSummary';
 
 const CheckoutPage = () => {
   return (

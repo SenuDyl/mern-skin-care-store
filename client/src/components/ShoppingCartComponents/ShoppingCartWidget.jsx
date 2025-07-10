@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Box,
     Button,
@@ -12,21 +12,19 @@ import {
     Avatar,
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { Close } from '@mui/icons-material'
-
-const cartItems = [
-    {
-        id: 1,
-        name: 'Complex Sunscreen Balm',
-        price: 22.50,
-        quantity: 1,
-        image: 'https://pplx-res.cloudinary.com/image/private/user_uploads/37404127/a4b8e625-3f9b-4368-82f9-13d51c63ee1a/image.jpg', // Replace with actual product image
-    },
-]
+import { Add, Close, Remove } from '@mui/icons-material'
+import { useCart } from '../../hooks/CartContext'
+import { useNavigate } from 'react-router-dom'
 
 const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
-    const theme = useTheme()
-    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const navigate = useNavigate();
+    const theme = useTheme();
+    const { removeFromCart, updateQuantity, fetchCart, cartItems } = useCart();
+    console.log("CartItems: ", cartItems);
+    useEffect(() => {
+        fetchCart();
+    }, []);
+    const subtotal = cartItems?.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return (
         <Box
@@ -69,8 +67,18 @@ const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
             <Divider sx={{ my: 2, width: "100%" }} />
 
             {/* Cart Items */}
-            <List sx={{ width: '100%', bgcolor: "transparent", flexGrow: 1, p: 0 }}>
-                {cartItems.length > 0 ? (
+            <List
+                sx={{
+                    width: '100%',
+                    bgcolor: "transparent",
+                    flexGrow: 1,
+                    p: 0,
+                    overflowY: 'auto',
+                    maxHeight: 'calc(100vh - 270px)', // Adjust based on header + footer height
+                }}
+            >
+
+                {cartItems?.length > 0 ? (
                     cartItems.map((item) => (
                         <ListItem
                             key={item.id}
@@ -84,7 +92,9 @@ const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
                                 justifyContent: "space-between",
                             }}
                             secondaryAction={
-                                <IconButton edge="end" sx={{ color: "#bbb" }}>
+                                <IconButton edge="end" sx={{ color: "#bbb" }} onClick={() => 
+                                    {removeFromCart(item.productId) 
+                                fetchCart();}}>
                                     <Close />
                                 </IconButton>
                             }
@@ -92,7 +102,7 @@ const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
                             <ListItemAvatar sx={{ minWidth: 56 }}>
                                 <Avatar
                                     variant="square"
-                                    src={item.image}
+                                    src={item.imageUrl}
                                     alt={item.name}
                                     sx={{ width: 48, height: 48, borderRadius: 1, bgcolor: "#f5f5f5" }}
                                 />
@@ -101,9 +111,33 @@ const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
                                 <Typography sx={{ fontWeight: 500, fontSize: "1rem", color: "#222" }}>
                                     {item.name}
                                 </Typography>
-                                <Typography sx={{ fontSize: "0.95rem", color: "#999", mt: 0.3 }}>
-                                    {item.quantity} × ${item.price.toFixed(2)}
-                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                                    <IconButton
+                                        size="small"
+                                        sx={{ color: '#999' }}
+                                        onClick={() => {
+                                            if (item.quantity > 1) updateQuantity(item.productId, item.quantity - 1);
+                                        }}
+                                    >
+                                        <Remove fontSize="small" />
+                                    </IconButton>
+
+                                    <Typography sx={{ mx: 1, fontSize: '0.95rem', color: '#222', minWidth: 24, textAlign: 'center' }}>
+                                        {item.quantity}
+                                    </Typography>
+
+                                    <IconButton
+                                        size="small"
+                                        sx={{ color: '#999' }}
+                                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                                    >
+                                        <Add fontSize="small" />
+                                    </IconButton>
+
+                                    <Typography sx={{ ml: 2, fontSize: "0.95rem", color: "#999" }}>
+                                        × ${item.price.toFixed(2)}
+                                    </Typography>
+                                </Box>
                             </Box>
                         </ListItem>
                     ))
@@ -117,7 +151,7 @@ const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
             {/* Subtotal */}
             <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
                 <Typography sx={{ color: "#222", fontWeight: 500 }}>Subtotal:</Typography>
-                <Typography sx={{ color: "#222", fontWeight: 500 }}>${subtotal.toFixed(2)}</Typography>
+                <Typography sx={{ color: "#222", fontWeight: 500 }}>${subtotal?.toFixed(2)}</Typography>
             </Box>
 
             {/* Action Buttons */}
@@ -138,6 +172,7 @@ const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
                             backgroundColor: "#fff0f6",
                         },
                     }}
+                    onClick={() => { navigate(`/cart`) }}
                 >
                     VIEW CART
                 </Button>
@@ -156,6 +191,7 @@ const ShoppingCartWidget = ({ isCartIconToggled, setIsCartIconToggled }) => {
                             backgroundColor: "#fff0f6",
                         },
                     }}
+                    onClick={() => { navigate(`/checkout`) }}
                 >
                     CHECKOUT
                 </Button>

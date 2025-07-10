@@ -1,6 +1,4 @@
 import React from 'react'
-import { Box } from '@mui/material'
-import HeroSection from '../components/HomePage/HeroSection'
 import Layout from '../components/HomePage/Layout'
 import ProductList from '../components/HomePage/ProductList'
 import PromoSection from '../components/HomePage/PromoSection'

@@ -1,31 +1,34 @@
 import {
-    Box, Grid, Typography, Card, CardMedia, CardContent, IconButton, Skeleton, Pagination
+    Box, Grid, Typography, Card, CardMedia, CardContent, IconButton, Skeleton
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/AuthContext';
+import { useCart } from '../../hooks/CartContext';
 
 const ProductList = () => {
+    const { addToCart } = useCart();
+    const { token } = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [page, setPage] = useState(1); // UI page starts from 1
-    const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 8;
 
-    const getProducts = async (pageNum = 1) => {
+    const getProducts = async () => {
         setIsLoading(true);
         try {
-            // Assuming backend expects 1-based page number:
-            const response = await fetch(`http://localhost:5000/api/products?page=${pageNum}&size=${pageSize}`, {
+            const response = await fetch(`http://localhost:5000/api/products`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             const data = await response.json();
-            setProducts(data.content);
-            setTotalPages(data.totalPages);
+            console.log("Fetched products", data)
+            setProducts(data.content || data); // adjust based on actual API response
         } catch (error) {
             console.error("Failed to fetch products:", error);
         } finally {
@@ -34,17 +37,10 @@ const ProductList = () => {
     };
 
     useEffect(() => {
-        getProducts(page);
-    }, [page]);
+        getProducts();
+    }, []);
 
-    useEffect(() => {
-        if (page > totalPages && totalPages > 0) {
-            setPage(totalPages);
-        }
-    }, [totalPages, page]);
-
-
-    const placeholderArray = new Array(pageSize).fill(null);
+    const placeholderArray = new Array(20).fill(null); // Use a fixed size if needed for loading state
 
     return (
         <Box sx={{ py: 8, px: 20 }}>
@@ -66,14 +62,15 @@ const ProductList = () => {
                             </Card>
                         </Grid>
                     ))
-                    : products.map((product) => (
+                    : products?.map((product) => (
                         <Grid item xs={12} sm={7} md={3} key={product.id}>
                             <Box
                                 sx={{
                                     position: 'relative',
                                     '&:hover .cart-icon': { opacity: 1 },
                                 }}
-                                onClick={() => navigate(`/products/${product.id}`)}                            >
+                                onClick={() => navigate(`/products/${product.id}`)}
+                            >
                                 <IconButton
                                     className="cart-icon"
                                     sx={{
@@ -87,16 +84,22 @@ const ProductList = () => {
                                         zIndex: 2,
                                     }}
                                 >
-                                    <ShoppingCartIcon fontSize="small" />
+                                    <ShoppingCartIcon
+                                        fontSize="small"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            addToCart(product);
+                                        }}
+                                    />
                                 </IconButton>
                                 <Card elevation={0} sx={{ textAlign: 'left' }}>
                                     <CardMedia
                                         component="img"
                                         image={product.imageUrl}
                                         alt={product.name}
-                                        sx={{ height: 300, objectFit: 'contain', mb: 2 }}
+                                        sx={{ height: 200, objectFit: 'contain', mb: 2 }}
                                     />
-                                    <CardContent sx={{ px: 1 }}>
+                                    <CardContent >
                                         <Typography variant="h6" color="text.secondary">
                                             {product.category?.name}
                                         </Typography>
@@ -112,19 +115,6 @@ const ProductList = () => {
                         </Grid>
                     ))}
             </Grid>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <Box display="flex" justifyContent="center" mt={6}>
-                    <Pagination
-                        count={totalPages}
-                        page={page}
-                        onChange={(event, value) => setPage(value)}
-                        color="primary"
-                        size="large"
-                    />
-                </Box>
-            )}
         </Box>
     );
 };

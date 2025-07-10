@@ -9,20 +9,33 @@ import {
 import ProductDetailsTabs from './ProductDetailsTab';
 import sampleTube from '../../assets/sampletube.jpg';
 import { useParams } from 'react-router-dom';
+import CustomerReviews from './CustomerReviews';
+import { useCart } from '../../hooks/CartContext';
 
 const ProductComponent = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
+  const { cartItems, addToCart, updateQuantity, removeFromCart } = useCart();
 
-  const [makeupQty, setMakeupQty] = useState(0);
+  const [makeupQty, setMakeupQty] = useState(1);
   const [balancingQty, setBalancingQty] = useState(0);
   const theme = useTheme();
   const [product, setProduct] = useState(null);
+  useEffect(() => {
+    if (product && cartItems?.length > 0) {
+      const existingItem = cartItems.find((item) => item.id === product.id);
+      if (existingItem) {
+        setMakeupQty(existingItem.quantity);
+      }
+    }
+  }, [product, cartItems]);
+
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/products/${id}`);
         const data = await res.json();
+        console.log("Product Details", data);
         setProduct(data)
       } catch (err) {
         console.error("Failed to load product:", err);
@@ -32,7 +45,7 @@ const ProductComponent = () => {
   }, [id]);
 
   return (
-    <Box sx={{ backgroundColor: '#f9f9fd', minHeight: '100vh', py: 6 }}>
+    <Box sx={{ backgroundColor: '#f9f9fd', py: 6 }}>
       <Paper
         elevation={4}
         sx={{
@@ -54,14 +67,32 @@ const ProductComponent = () => {
           }}
         >
           {/* Image Section */}
-          <Card sx={{ maxWidth: 400, mx: 'auto' }}>
+          <Card
+            sx={{
+              maxWidth: 400,
+              mx: 'auto',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.03)',
+                boxShadow: 6,
+              },
+            }}
+          >
             <CardMedia
               component="img"
-              image={sampleTube}
+              image={product?.imageUrl}
               alt="Flawless Product"
-              sx={{ objectFit: 'contain', p: 2 }}
+              sx={{
+                objectFit: 'contain',
+                p: 2,
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                },
+              }}
             />
           </Card>
+
 
           {/* Product Details Section */}
           <Box sx={{ flex: 1 }}>
@@ -70,24 +101,24 @@ const ProductComponent = () => {
                 Home
               </Link>
               <Link underline="hover" color="inherit" href="/">
-                Category
+                {product?.category?.name}
               </Link>
-              <Typography color="text.primary">{product.category.name}</Typography>
+              <Typography color="text.primary">{product?.name}</Typography>
             </Breadcrumbs>
 
             <Typography variant="h2" mt={1}>
-              {product.name}
+              {product?.name}
             </Typography>
 
             <Typography variant="h5" color="primary" mt={1}>
-              {product.price}{' '}
+              ${product?.price}{' '}
               <Typography component="span" variant="body1" color="text.secondary">
                 &nbsp;+ Free Shipping
               </Typography>
             </Typography>
 
             <Typography variant="body1" mt={2} color="text.secondary">
-              {product.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
+              {product?.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
             </Typography>
 
             {/* <Typography variant="body1" mt={1} color="text.secondary">
@@ -95,54 +126,53 @@ const ProductComponent = () => {
             </Typography> */}
 
             {/* Quantity Selectors */}
-            <Grid container spacing={2} mt={3}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  // label="Makeup Melting Cleanser ($29.90)"
-                  type="number"
-                  fullWidth
-                  InputProps={{ inputProps: { min: 0 } }}
-                  value={makeupQty}
-                  onChange={(e) => setMakeupQty(Number(e.target.value))}
-                />
-              </Grid>
-              {/* <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Balancing Daily Cleanser ($34.90)"
-                  type="number"
-                  fullWidth
-                  InputProps={{ inputProps: { min: 0 } }}
-                  value={balancingQty}
-                  onChange={(e) => setBalancingQty(Number(e.target.value))}
-                />
-              </Grid> */}
-            </Grid>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 3 }}>
+              <TextField
+                type="number"
+                size="small"
+                sx={{ width: 100 }}
+                InputProps={{ inputProps: { min: 0 } }}
+                value={makeupQty}
+                onChange={(e) => setMakeupQty(Number(e.target.value))}
+              />
 
-            <Button
-              variant="outlined"
-              sx={{
-                borderColor: "#ff4081",
-                color: "#ff4081",
-                fontWeight: 'bold',
-                py: 1.5,
-                fontSize: "1rem",
-                mt: 3,
-                px: 4,
-                letterSpacing: 1,
-                '&:hover': {
+              <Button
+                variant="outlined"
+                sx={{
                   borderColor: "#ff4081",
-                  backgroundColor: "#fff0f6",
-                },
-              }}
-            >
-              Add to Cart
-            </Button>
+                  color: "#ff4081",
+                  fontWeight: 'bold',
+                  py: 1.2,
+                  fontSize: "1rem",
+                  px: 15,
+                  letterSpacing: 1,
+                  '&:hover': {
+                    borderColor: "#ff4081",
+                    backgroundColor: "#fff0f6",
+                  },
+                }}
+                onClick={() => {
+                  if (makeupQty === 1) {
+                    addToCart(product)
+                  } else if (makeupQty>1){
+                    addToCart(product)
+                    updateQuantity(product.id, makeupQty)
+                  } else if (makeupQty === 0) {
+                    removeFromCart(product.id);
+                  }
+                }}
+              >
+                Add to Cart
+              </Button>
+            </Box>
+
 
             {/* Categories */}
-            <Typography variant="body1" mt={2}>
-              Categories:
-              <Chip label="Bundles" size="medium" sx={{ mx: 1 }} />
-              <Chip label="Moisturizer" size="medium" />
+            <Typography variant="body1" mt={2} sx={{ py: 1 }}>
+              Skin Concerns:
+              {product?.skinConcerns.map((item, index) => (
+                <Chip key={item.id || index} label={item.name} size="medium" sx={{ mx: 1 }} />
+              ))}
             </Typography>
 
             {/* Payment Methods */}
@@ -160,7 +190,10 @@ const ProductComponent = () => {
 
         </Box>
         <Divider sx={{ my: 2 }} />
-        <ProductDetailsTabs />
+        <Box sx={{ transition: 'min-height 0.3s ease' }}>
+          <ProductDetailsTabs description={product?.description} reviews={product?.reviews} />
+        </Box>
+        <CustomerReviews />
       </Paper>
 
     </Box>

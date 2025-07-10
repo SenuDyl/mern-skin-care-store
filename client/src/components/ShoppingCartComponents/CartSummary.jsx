@@ -1,148 +1,137 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
+  Paper,
   TextField,
   Button,
-  Badge,
-  Avatar,
   Divider,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
+  Badge,
+} from '@mui/material';
+import { useCart } from '../../hooks/CartContext';
 
-const PinkButton = styled(Button)({
-  backgroundColor: "#ff4a6e",
-  color: "#fff",
-  height: 48,
-  minWidth: 64,
-  borderRadius: 8,
-  fontWeight: "bold",
-  fontSize: 18,
-  boxShadow: "none",
-  "&:hover": {
-    backgroundColor: "#e63e5d",
-  },
-});
+const CartSimple = () => {
 
-const CartSummary = () => {
-  const [coupon, setCoupon] = useState("");
-  const [couponError, setCouponError] = useState(false);
+    const { cartItems } = useCart();
+  const [coupon, setCoupon] = useState('');
 
-  // Example product data
-  const product = {
-    name: "Complex Sunscreen Balm",
-    price: 22.5,
-    image: "https://pplx-res.cloudinary.com/image/private/user_uploads/37404127/80eae3f8-5afd-441e-be4e-df46e8c8fd74/image.jpg",
-    quantity: 1,
-  };
-
-  const handleCouponApply = (e) => {
-    e.preventDefault();
-    if (!coupon.trim()) {
-      setCouponError(true);
-    } else {
-      setCouponError(false);
-      // Handle coupon logic here
-    }
-  };
+  const subtotal = cartItems
+    .reduce((sum, item) => sum + item.price * item.quantity, 0)
+    .toFixed(2);
 
   return (
     <Box
       sx={{
-        bgcolor: "#fafbff",
-        borderRadius: 2,
-        p: 3,
-        maxWidth: 400,
-        mx: "auto",
-        fontFamily: "inherit",
+        bgcolor: '#f8f9fc',
+        minHeight: '100vh',
+        p: { xs: 2, md: 4 },
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
       }}
     >
-      {/* Product Row */}
-      <Box sx={{ display: "flex", alignItems: "flex-start", mb: 3 }}>
-        <Badge
-          badgeContent={product.quantity}
-          color="error"
-          sx={{
-            "& .MuiBadge-badge": {
-              right: -10,
-              top: 10,
-              fontWeight: "bold",
-              fontSize: 14,
-              border: "2px solid #fff",
-            },
-          }}
-        >
-          <Avatar
-            src={product.image}
-            alt={product.name}
-            variant="rounded"
+      <Paper
+        elevation={0}
+        sx={{
+          width: 400,
+          p: 3,
+          bgcolor: '#fff',
+          borderRadius: 3,
+        }}
+      >
+        {cartItems.map((item) => (
+          <Box
+            key={item.id}
             sx={{
-              width: 56,
-              height: 70,
-              bgcolor: "#fff",
-              border: "1px solid #e0e0e0",
-              mr: 2,
+              display: 'flex',
+              alignItems: 'center',
+              mb: 7,
+              position: 'relative',
+            }}
+          >
+            <Badge
+              badgeContent={item.quantity}
+              color="secondary"
+              sx={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                '& .MuiBadge-badge': {
+                  fontWeight: 500,
+                  fontSize: 14,
+                  right: 12,
+                  top: -2,
+                  bgcolor: '#e91e63',
+                },
+              }}
+            >
+              <Box
+                component="img"
+                src={item.imageUrl}
+                alt={item.name}
+                sx={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 2,
+                  bgcolor: '#f5f5f5',
+                  border: '1px solid #eee',
+                  mr: 2,
+                }}
+              />
+            </Badge>
+            <Box sx={{ flex: 1 }}>
+              <Typography sx={{ fontWeight: 500, mb: 0.5, ml: 12 }}>
+                {item.name}
+              </Typography>
+              <Typography sx={{ color: '#888', fontSize: 15, ml: 12 }}>
+                ${item.price.toFixed(2)} × {item.quantity}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+
+        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+          <TextField
+            placeholder="Coupon Code"
+            size="small"
+            value={coupon}
+            onChange={(e) => setCoupon(e.target.value)}
+            sx={{ flex: 1, bgcolor: '#fafafa' }}
+            InputProps={{
+              sx: { borderRadius: 2 },
             }}
           />
-        </Badge>
-        <Box sx={{ flex: 1, mt: 0.5 }}>
-          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-            {product.name}
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: '#e91e63',
+              color: '#fff',
+              fontWeight: 500,
+              borderRadius: 2,
+              px: 3,
+              boxShadow: 'none',
+              '&:hover': { bgcolor: '#d81b60' },
+            }}
+          >
+            Apply
+          </Button>
+        </Box>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+          <Typography>Subtotal</Typography>
+          <Typography>${subtotal}</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+          <Typography sx={{ fontWeight: 700, fontSize: 20 }}>Total</Typography>
+          <Typography sx={{ fontWeight: 700, fontSize: 20 }}>
+            ${subtotal}
           </Typography>
         </Box>
-        <Typography variant="body1" sx={{ fontWeight: 500 }}>
-          ${product.price.toFixed(2)}
-        </Typography>
-      </Box>
-
-      {/* Coupon Row */}
-      <form onSubmit={handleCouponApply} style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-        <TextField
-          placeholder="Coupon Code"
-          variant="outlined"
-          value={coupon}
-          onChange={(e) => {
-            setCoupon(e.target.value);
-            setCouponError(false);
-          }}
-          error={couponError}
-          helperText={couponError ? "Please enter a coupon code" : " "}
-          sx={{
-            flex: 1,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 8,
-              bgcolor: "#fff",
-            },
-            "& .MuiFormHelperText-root": {
-              marginLeft: 0,
-            },
-          }}
-        />
-        <PinkButton
-          type="submit"
-          sx={{
-            px: 4,
-            minWidth: 0,
-            mt: "auto",
-            mb: "auto",
-          }}
-        >
-          &nbsp;
-        </PinkButton>
-      </form>
-
-      {/* Subtotal and Total */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-        <Typography color="text.secondary">Subtotal</Typography>
-        <Typography color="text.secondary">${product.price.toFixed(2)}</Typography>
-      </Box>
-      <Divider sx={{ mb: 1 }} />
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography sx={{ fontWeight: 600, fontSize: 18 }}>Total</Typography>
-        <Typography sx={{ fontWeight: 700, fontSize: 22 }}>${product.price.toFixed(2)}</Typography>
-      </Box>
+      </Paper>
     </Box>
   );
-}
+};
 
-export default CartSummary;
+export default CartSimple;
