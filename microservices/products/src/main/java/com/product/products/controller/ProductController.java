@@ -2,6 +2,7 @@ package com.product.products.controller;
 
 import java.util.List;
 
+import com.product.products.dto.ProductSummaryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,9 @@ public class ProductController {
     public Product getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
+
+    @PostMapping("/batch")
+    public List<ProductSummaryDTO> getProductBatch(@RequestBody List<Long> ids) { return productService.getProductBatch(ids); }
 
     @PostMapping("")
     public Product createProduct(@RequestBody ProductDTO productDTO) {

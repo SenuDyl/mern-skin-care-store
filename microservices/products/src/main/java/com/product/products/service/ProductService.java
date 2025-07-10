@@ -1,11 +1,13 @@
 package com.product.products.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import com.product.products.dao.BrandRepository;
+import com.product.products.dto.ProductSummaryDTO;
 import com.product.products.model.Brand;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,6 +86,23 @@ public class ProductService {
         return productRepository.findAll(pageable);
     }
 
+    public List<ProductSummaryDTO> getProductBatch(List<Long> ids) {
+        List<ProductSummaryDTO> productSummaries = new ArrayList<>();
+        for (Long id : ids) {
+            productSummaries.add(getProductSummary(id));
+        }
+        return productSummaries;
+    }
+
+    private ProductSummaryDTO getProductSummary(Long id) {
+        Product product = getProductById(id);
+        ProductSummaryDTO productSummaryDTO = new ProductSummaryDTO();
+        productSummaryDTO.setId(id);
+        productSummaryDTO.setName(product.getName());
+        productSummaryDTO.setPrice(product.getPrice());
+        productSummaryDTO.setImageUrl(product.getImageUrl());
+        return productSummaryDTO;
+    }
 
     public Product getProductById(Long id) {
         return productRepository.findById(id)
