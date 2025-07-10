@@ -12,7 +12,6 @@
     <modules>
         <!-- <module>customer</module>
         <module>fraud</module>
-        <module>eureka-server</module>
         <module>clients</module>
         <module>notification</module>
         <module>apigw</module>
@@ -21,7 +20,8 @@
         <module>products</module>
         <module>cart</module>
         <module>users</module>
-        <module>eureka-server</module>
+        <module>orders</module>
+
     </modules>
 
     <name>ecommerce-app</name>

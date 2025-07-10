@@ -3,12 +3,12 @@ server:
     include-message: always
     include-binding-errors: always
   port:
-    8083
+    8084
 
 spring:
   datasource:
     password: password
-    url: jdbc:postgresql://localhost:5432/cartsdb
+    url: jdbc:postgresql://localhost:5432/ordersdb
     username: postgres
   jpa:
     hibernate:
@@ -18,12 +18,3 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    prefer-ip-address: true

@@ -1,9 +1,9 @@
-package com.cart.cart.service;
+package com.order.order.service;
 
-import com.example.orderservice.dto.OrderRequest;
-import com.example.orderservice.entity.Order;
-import com.example.orderservice.entity.OrderItem;
-import com.example.orderservice.repository.OrderRepository;
+import com.order.order.dto.OrderRequest;
+import com.order.order.model.Order;
+import com.order.order.model.OrderItem;
+import com.order.order.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +23,26 @@ public class OrderService {
         order.setCreatedAt(LocalDateTime.now());
         order.setStatus("PENDING");
 
+        // Set billing/shipping/payment details
+        order.setEmail(request.getEmail());
+        order.setFirstName(request.getFirstName());
+        order.setLastName(request.getLastName());
+        order.setCountry(request.getCountry());
+        order.setHouseNumber(request.getHouseNumber());
+        order.setApartment(request.getApartment());
+        order.setTown(request.getTown());
+        order.setDistrict(request.getDistrict());
+        order.setPostcode(request.getPostcode());
+        order.setPhoneNumber(request.getPhoneNumber());
+        order.setAdditionalInformation(request.getAdditionalInformation());
+        order.setPaymentMethod(request.getPaymentMethod());
+        order.setPaymentDetails(request.getPaymentDetails());
+
         List<OrderItem> orderItems = request.getItems().stream().map(item -> {
             OrderItem orderItem = new OrderItem();
             orderItem.setProductId(item.getProductId());
             orderItem.setQuantity(item.getQuantity());
-            orderItem.setPrice(getProductPrice(item.getProductId())); // Replace with actual ProductService call
+            orderItem.setPrice(item.getPrice());
             orderItem.setOrder(order);
             return orderItem;
         }).collect(Collectors.toList());

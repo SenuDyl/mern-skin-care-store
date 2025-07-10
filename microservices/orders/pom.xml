@@ -8,10 +8,10 @@
 		<version>3.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.cart</groupId>
-	<artifactId>cart</artifactId>
+	<groupId>com.order</groupId>
+	<artifactId>order</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>carts</name>
+	<name>orders</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

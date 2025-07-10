@@ -1,8 +1,9 @@
-package com.example.orderservice.controller;
+package com.order.order.controller;
 
-import com.example.orderservice.dto.OrderRequest;
-import com.example.orderservice.entity.Order;
-import com.example.orderservice.service.OrderService;
+
+import com.order.order.dto.OrderRequest;
+import com.order.order.model.Order;
+import com.order.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class OrderController {
         return orderService.placeOrder(request);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     public List<Order> getUserOrders(@PathVariable Long userId) {
         return orderService.getOrdersByUser(userId);
     }
