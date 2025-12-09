@@ -44,20 +44,6 @@ A full-stack, microservices-based skincare e-commerce platform built using **Rea
 
 ---
 
-## Upcoming Features (Planned)
-
-| Feature                          | Description                                                   |
-|----------------------------------|---------------------------------------------------------------|
-| **Google Authentication**     | Use Google OAuth for easy and secure user login              |
-| **Email Notification Service**| Notify users via email once an order is placed               |
-| **AI Chatbot Assistant**      | Integrate a smart assistant to help users with FAQs and more |
-| **Recommendation Engine**     | Display related/recommended products based on preferences    |
-
-## Architecture Diagram
-
-
----
-
 ## Project Structure (Monorepo Style)
 ```
 mern-skincare-store/
@@ -144,10 +130,6 @@ REACT_APP_BFF_URL=http://localhost:3001
 
 ### Contact
 For any suggestions, issues, or contributions:
-
-📧 [senurimallikarachchi@gmail.com.com]
-🔗 LinkedIn
-🐙 GitHub
 
 
 
