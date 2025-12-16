@@ -19,7 +19,6 @@ A full-stack, microservices-based skincare e-commerce platform built using **Rea
 - **Product Service** – Manages product catalog
 - **Cart Service** – Handles cart operations
 - **User Service** – Manages user accounts and profiles
-- **Order Service** - Manages orders
 
 #### BFF (Backend For Frontend) Layer
 - Built in **Node.js (Express)**
